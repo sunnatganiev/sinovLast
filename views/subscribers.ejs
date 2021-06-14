@@ -113,64 +113,8 @@
                       <a class="mr-2" href="<%= 'edit-user.html/' + user.id %> "
                         ><i class="far fa-edit"></i
                       ></a>
-                      <a
-                        href="<%= '/delete/' + user.id %> "
-                        data-toggle="modal"
-                        data-target="#deleteModal"
-                        ><i class="fas fa-trash-alt text-danger"></i
-                      ></a>
                     </td>
                   </tr>
-
-                  <!-- delete Modal-->
-
-                  <div
-                    class="modal fade"
-                    id="deleteModal"
-                    tabindex="-1"
-                    role="dialog"
-                    aria-labelledby="exampleModalLabel"
-                    aria-hidden="true"
-                  >
-                    <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLabel">
-                            Are you sure?
-                          </h5>
-                          <button
-                            class="close"
-                            type="button"
-                            data-dismiss="modal"
-                            aria-label="Close"
-                          >
-                            <span aria-hidden="true">×</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                          Select "YES" below if you are ready to delete.
-                        </div>
-                        <form
-                          action="<%= 'delete/' + user.id %>"
-                          method="POST"
-                          enctype="multipart/form-data"
-                        >
-                          <div class="modal-footer">
-                            <button
-                              class="btn btn-secondary"
-                              type="button"
-                              data-dismiss="modal"
-                            >
-                              Cancel
-                            </button>
-                            <button class="btn btn-danger" type="submit">
-                              YES
-                            </button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
 
                   <% }); %>
                 </tbody>
