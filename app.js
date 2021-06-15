@@ -26,7 +26,11 @@ app.set("view engine", "ejs");
 
 // 1) GLOBAL MIDDLEWARES
 // Set security HTTP headers
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 
 // Development login
 console.log(process.env.NODE_ENV);

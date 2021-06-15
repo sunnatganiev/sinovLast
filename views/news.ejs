@@ -88,13 +88,13 @@
               <% news.forEach((newOne) => { %>
               <div class="row g-3">
                 <div class="col-md-12">
-                  <div class="d-flex align-items-center mb-4">
-                    <div class="flex-shrink-0">
+                  <div class="d-flex align-items-center mb-4 flex-column flex-sm-row">
+                    <div class="flex-shrink-0 mr-0 mr-sm-3 mb-3 mb-ms-0">
                       <img width="150" height="150" src="/files/news/<%= newOne.image %> " alt="<%= newOne.title %>" class="img-thumbnail"/>
                     </div>
-                    <div class="flex-grow-1 ms-4">
-                      <h3 class="ml-4"><%= newOne.title %></h3>
-                      <p class="ml-4"><%= newOne.content %></p>
+                    <div class="flex-grow-1 ms-4 text-center text-sm-left">
+                      <h3><%= newOne.title %></h3>
+                      <p><%= newOne.content %></p>
                     </div>
                   </div>
                   <hr
