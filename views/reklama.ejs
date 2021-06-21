@@ -82,7 +82,7 @@
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
               <h1 class="h3 mb-0 text-gray-800">Reklamalar</h1>
-              <a href="add-reklama.html">Add new &plus;</a>
+              <a href="add-reklama">Add new &plus;</a>
             </div>
 
             <div class="row">
@@ -92,6 +92,7 @@
                     <th scope="col">Title</th>
 
                     <th scope="col">Link</th>
+                    <th scope="col" class="text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -103,6 +104,56 @@
                       <a href="<%= rek.link %> " target="_blank"
                         ><%= rek.title %>
                       </a>
+                    </td>
+                    <td>
+                      <div class="d-flex justify-content-center">
+                        <a
+                          class="btn btn-sm btn-warning mr-1 d-block"
+                          href="/reklama/id/<%= rek._id %>"
+                          ><i class="far fa-edit"></i
+                        ></a>
+                        <div class="dropdown d-flex align-items-center ml-1">
+                          <a
+                            href="#"
+                            class="btn btn-sm btn-danger"
+                            id="dropDownDeleteConfirm"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            ><i class="fas fa-trash"></i
+                          ></a>
+                          <div
+                            class="dropdown-menu p-3"
+                            aria-labelledby="dropDownDeleteConfirm"
+                          >
+                            <h6 class="text-center">
+                              Are you sure you want to delete this item?
+                            </h6>
+                            <div class="d-flex justify-content-center">
+                              <form
+                                method="POST"
+                                action="/reklama/delete"
+                                class="d-flex"
+                              >
+                                <input
+                                  type="hidden"
+                                  name="id"
+                                  value="<%= rek._id %>"
+                                />
+                                <button
+                                  type="submit"
+                                  class="btn btn-danger btn-sm mr-1"
+                                >
+                                  YES
+                                </button>
+                              </form>
+                              <a class="btn btn-success btn-sm ml-1" href="#"
+                                >NO</a
+                              >
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                   <% }) %>
@@ -166,7 +217,7 @@
             >
               Cancel
             </button>
-            <a class="btn btn-primary" href="login.html">Logout</a>
+            <a class="btn btn-primary" href="login">Logout</a>
           </div>
         </div>
       </div>

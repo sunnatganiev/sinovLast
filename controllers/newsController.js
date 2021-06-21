@@ -31,8 +31,6 @@ const filterObj = (obj, ...allowedFields) => {
 exports.uploadNews = upload.single("image");
 
 exports.createNews = catchAsync(async (req, res, next) => {
-  console.log("NewsController line 34: ", req.file);
-
   const createObj = filterObj(req.body, "title", "content");
 
   if (req.file) createObj.image = req.file.filename;
@@ -80,7 +78,6 @@ exports.getNews = catchAsync(async (req, res, next) => {
 });
 
 exports.updateNews = catchAsync(async (req, res, next) => {
-  console.log("newsController line 83: ", req.file);
   const updateObj = filterObj(req.body, "title", "content");
 
   if (req.file) updateObj.image = req.file.filename;

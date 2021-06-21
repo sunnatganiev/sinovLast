@@ -122,7 +122,6 @@ exports.signup = catchAsync(async (req, res, next) => {
 });
 
 exports.signupAdmin = catchAsync(async (req, res, next) => {
-  console.log("authController line 110: ", req.body);
   const filteredBody = filterObj(
     req.body,
     "name",
@@ -279,5 +278,5 @@ exports.logout = (req, res) => {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
   });
-  res.redirect("/login.html");
+  res.redirect("/login");
 };

@@ -7,6 +7,7 @@ const Team = require("../models/teamModel");
 const Live = require("../models/liveModel");
 const News = require("../models/newsModel");
 const Reklama = require("../models/reklamaModel");
+const Admin = require("../models/adminModel");
 
 const multerStorage = multer.memoryStorage();
 
@@ -23,13 +24,12 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 
-exports.uploadPhoto = upload.single("file");
+exports.uploadPhoto = upload.single("image");
 
 exports.resizePhoto = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
   req.file.filename = `team-${Date.now()}.jpeg`;
-
   await sharp(req.file.buffer)
     .resize(500, 500)
     .toFormat("jpeg")
@@ -90,12 +90,15 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 exports.dashboard = catchAsync(async (req, res) => {
-  // console.log("viewsController line 6: ", res);
   const users = await User.find();
+  const subsCount = await User.count({ active: true });
+  const adminsCount = await Admin.count();
   res.status(200).render("index", {
     title: "Dashboard",
     admin: res.locals.admin,
     users,
+    subsCount,
+    adminsCount,
   });
 });
 
@@ -135,21 +138,15 @@ exports.editSubscriber = catchAsync(async (req, res, next) => {
   );
 
   const day = new Date();
-  console.log(day.toDateString());
 
   function addDays(date, days) {
     var result = new Date(date);
     result.setDate(result.getDate() + days);
-    console.log("viewsController line 128: ", result.toDateString());
     return result.toDateString();
   }
 
-  console.log(req.body.active);
-
   if (req.body.active && req.body.active === "true") {
-    console.log(addDays(day, 0));
     filteredBody.dayLeft = addDays(day, 8);
-    console.log("viewsController line 138: ", filteredBody);
   }
 
   if (req.file) filteredBody.image = req.file.filename;
@@ -159,7 +156,6 @@ exports.editSubscriber = catchAsync(async (req, res, next) => {
     runValidators: true,
   });
 
-  console.log(user);
   res.status(200).render("edit-user", {
     title: "Users",
     user,
@@ -168,7 +164,6 @@ exports.editSubscriber = catchAsync(async (req, res, next) => {
 
 exports.editSubscribers = catchAsync(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(req.params.id);
-  console.log("viewsController line 158: ", user);
   if (!user) return next(new AppError("No user found with that ID"));
 
   res.status(200).render("edit-user", {
@@ -196,12 +191,17 @@ exports.payment = (req, res) => {
 };
 
 exports.liveFootball = catchAsync(async (req, res) => {
-  const lives = await Live.find();
-  console.log("viewsController line 156: ", lives);
-  res.status(200).render("match", {
-    title: "live",
-    lives,
-  });
+  console.log("hi");
+  try {
+    const lives = await Live.find().populate("teams");
+    console.log(lives);
+    res.status(200).render("match", {
+      title: "live",
+      lives,
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 exports.addLive = catchAsync(async (req, res) => {
@@ -213,17 +213,6 @@ exports.addLive = catchAsync(async (req, res) => {
 });
 
 exports.setliveFootball = catchAsync(async (req, res) => {
-  const filteredBody = filterObj(
-    req.body,
-    "chempionat",
-    "content",
-    "matchTime",
-    "teams"
-  );
-
-  if (req.file) filteredBody.image = req.file.filename;
-  const match = await Live.create(filteredBody);
-  console.log("viewsController line 174: ", match);
   res.status(200).render("live-football", {
     title: "live",
     match,
@@ -238,7 +227,6 @@ exports.addTeams = (req, res) => {
 
 exports.getTeams = catchAsync(async (req, res) => {
   const teams = await Team.find();
-  console.log("viewsController line 197: ", teams);
   res.status(200).render("teams", {
     title: "live",
     teams,
@@ -247,10 +235,7 @@ exports.getTeams = catchAsync(async (req, res) => {
 
 exports.addTeam = catchAsync(async (req, res) => {
   const filteredBody = filterObj(req.body, "name");
-  console.log(req.body);
   if (req.file) filteredBody.image = req.file.filename;
-
-  console.log(filteredBody);
 
   await Team.create(filteredBody);
 
@@ -259,9 +244,29 @@ exports.addTeam = catchAsync(async (req, res) => {
   });
 });
 
+exports.showTeam = catchAsync(async (req, res) => {
+  const team = await Team.findById(req.params.id);
+  res.status(200).render("show-team", {
+    team,
+  });
+});
+
+exports.editTeam = catchAsync(async (req, res) => {
+  const teamObj = req.body;
+  console.log(req.file);
+  if (req.file) teamObj.image = req.file.filename;
+  console.log(teamObj);
+  try {
+    await Team.findByIdAndUpdate(req.body.id, teamObj);
+  } catch (error) {
+    console.log(error);
+  }
+
+  res.redirect(`/teams/id/${teamObj.id}`);
+});
+
 exports.getNews = catchAsync(async (req, res) => {
   const news = await News.find();
-  console.log(news);
   res.status(200).render("news", {
     title: "news",
     news,
@@ -288,12 +293,47 @@ exports.addReklama = (req, res) => {
   });
 };
 
+exports.showNews = catchAsync(async (req, res) => {
+  const news = await News.findById(req.params.id);
+  // Tour.findOne({ _id: req.params.id })
+
+  if (!news) {
+    return next(new AppError("No news found with that ID", 404));
+  }
+
+  res.status(200).render(`show-news`, {
+    news,
+  });
+});
+
+exports.editNews = catchAsync(async (req, res, next) => {
+  const updateObj = req.body;
+
+  if (req.file) updateObj.image = req.file.filename;
+
+  const updatedNews = await News.findByIdAndUpdate(updateObj.id, updateObj);
+
+  if (!updatedNews) {
+    return next(new AppError("No news found with that ID", 404));
+  }
+
+  res.redirect(`/news/id/${updatedNews._id}`);
+});
+
 exports.addNews = catchAsync(async (req, res) => {
   const filteredBody = filterObj(req.body, "title", "content");
   if (req.file) filteredBody.image = req.file.filename;
-  await News.create(filteredBody);
+  const news = await News.create(filteredBody);
 
-  res.status(200).render("add-news", {
-    title: "news",
-  });
+  res.redirect(`/news/id/${news._id}`);
+});
+
+exports.deleteNews = catchAsync(async (req, res) => {
+  const news = await News.findByIdAndDelete(req.body.id);
+
+  if (!news) {
+    return next(new AppError("No news found with that ID", 404));
+  }
+
+  res.redirect(`/news`);
 });

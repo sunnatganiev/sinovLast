@@ -85,7 +85,7 @@
                 <h1 class="h3 mb-0 text-gray-800">Match</h1>
               </div>
               <div class="d-md-inline-block">
-                <a href="live-football.html" class="btn btn-link">
+                <a href="/live-football" class="btn btn-link">
                   &larr; Back
                 </a>
               </div>
@@ -93,10 +93,10 @@
 
             <div class="card p-4">
               <form
-                class="row g-3"
-                action="/"
+                class="row g-3 align-items-baseline"
                 method="POST"
                 enctype="multipart/form-data"
+                action="/add-live/add"
               >
                 <div class="col-md-12">
                   <input
@@ -110,11 +110,10 @@
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="exampleFormControlSelect1">Team 1</label>
-                    <select class="form-control" id="exampleFormControlSelect1">
-                      <option value="">Choose A Team</option>
+                    <select class="form-control" name="teams" id="exampleFormControlSelect1">
                       <% teams.map(team => { %>
-                      <option value="<% team.name  %> ">
-                        <%- team.name %>
+                      <option value="<%= team._id %>">
+                        <%= team.name %>
                       </option>
                       <% }) %>
                     </select>
@@ -123,35 +122,37 @@
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="exampleFormControlSelect1">Team 2</label>
-                    <select class="form-control" id="exampleFormControlSelect1">
-                      <option value="">Choose A Team</option>
+                    <select class="form-control" name="teams" id="exampleFormControlSelect1">
                       <% teams.map(team => { %>
-                      <option value="<% team.name  %> ">
-                        <%- team.name %>
+                      <option value="<%= team._id %>">
+                        <%= team.name %>
                       </option>
                       <% }) %>
                     </select>
                   </div>
                 </div>
                 <div class="col-md-6">
-                  <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text" id="inputGroupFileAddon01"
-                        >Cover photo</span
-                      >
-                    </div>
-
-                    <div class="custom-file">
-                      <input
-                        type="file"
-                        class="custom-file-input"
-                        id="inputGroupFile01"
-                        aria-describedby="inputGroupFileAddon01"
-                        name="file"
-                      />
-                      <label class="custom-file-label" for="inputGroupFile01"
-                        >Choose file</label
-                      >
+                  <div class="form-group">
+                    <label for="inputGroupFile01">Select photo</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroupFileAddon01"
+                          >Cover photo</span
+                        >
+                      </div>
+  
+                      <div class="custom-file">
+                        <input
+                          type="file"
+                          class="custom-file-input"
+                          id="inputGroupFile01"
+                          aria-describedby="inputGroupFileAddon01"
+                          name="image"
+                        />
+                        <label class="custom-file-label" for="inputGroupFile01"
+                          >Choose file</label
+                        >
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -159,7 +160,18 @@
                   <div class="form-group">
                     <label for="datetimepicker2">Select date</label>
                     <div class="input-group date" id="datetimepicker2">
-                      <input type="text" class="form-control" />
+                      <input type="date" name="matchDate" class="form-control" />
+                      <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="datetimepicker3">Select time</label>
+                    <div class="input-group date" id="datetimepicker3">
+                      <input type="time" name="matchTime" class="form-control" />
                       <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                       </span>
@@ -177,7 +189,7 @@
                     ></textarea>
                   </div>
                 </div>
-                <input type="submit" class="btn btn-primary" value="Add" />
+                <button type="submit" class="btn btn-primary">Add</button>
               </form>
             </div>
           </div>
@@ -237,7 +249,7 @@
             >
               Cancel
             </button>
-            <a class="btn btn-primary" href="login.html">Logout</a>
+            <a class="btn btn-primary" href="login">Logout</a>
           </div>
         </div>
       </div>

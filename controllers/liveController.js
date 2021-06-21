@@ -2,6 +2,7 @@ const multer = require("multer");
 const Live = require("../models/liveModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
+const Team = require("../models/teamModel");
 
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -31,27 +32,68 @@ const filterObj = (obj, ...allowedFields) => {
 exports.uploadLive = upload.single("image");
 
 exports.createLive = catchAsync(async (req, res, next) => {
+  console.log(req.body);
   const createObj = filterObj(
     req.body,
     "chempionat",
     "content",
+    "matchDate",
     "matchTime",
     "teams"
   );
 
   if (req.file) createObj.image = req.file.filename;
-  console.log(createObj)
-  const newLive = await Live.create(createObj);
-  res.status(201).json({
-    status: "success",
-    data: {
-      live: newLive,
-    },
+
+  try {
+    const newLive = await Live.create(createObj);
+    res.redirect(`/live-football/id/${newLive._id}`);
+  } catch (error) {
+    res.json(error);
+  }
+});
+
+exports.editLive = catchAsync(async (req, res, next) => {
+  const editObj = filterObj(
+    req.body,
+    "chempionat",
+    "content",
+    "matchDate",
+    "matchTime",
+    "teams"
+  );
+
+  if (req.file) editObj.image = req.file.filename;
+  try {
+    const updatedLive = await Live.findByIdAndUpdate(req.body.id, editObj);
+    res.redirect(`/live-football/id/${updatedLive._id}`);
+  } catch (error) {
+    console.log(error);
+    res.json(error);
+  }
+});
+
+exports.deleteLive = catchAsync(async (req, res, next) => {
+  console.log(req.body.id);
+  try {
+    await Live.findByIdAndDelete(req.body.id);
+    res.redirect("/live-football");
+  } catch (error) {
+    console.log(error);
+    res.json(error);
+  }
+});
+
+exports.showLive = catchAsync(async (req, res, next) => {
+  const live = await Live.findById(req.params.id).populate("teams");
+  const teams = await Team.find();
+  res.status(200).render("show-live", {
+    live,
+    teams,
   });
 });
 
 exports.getLives = catchAsync(async (req, res, next) => {
-  const lives = await Live.find();
+  const lives = await Live.find().populate("teams");
   // Tour.findOne({ _id: req.params.id })
 
   if (!lives) {
@@ -67,7 +109,7 @@ exports.getLives = catchAsync(async (req, res, next) => {
 });
 
 exports.getLive = catchAsync(async (req, res, next) => {
-  const live = await Live.findById(req.params.id);
+  const live = await Live.findById(req.params.id).populate("teams");
   // Tour.findOne({ _id: req.params.id })
 
   if (!live) {
@@ -104,15 +146,15 @@ exports.updateLive = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteLive = catchAsync(async (req, res, next) => {
-  const live = await Live.findByIdAndDelete(req.params.id);
+// exports.deleteLive = catchAsync(async (req, res, next) => {
+//   const live = await Live.findByIdAndDelete(req.params.id);
 
-  if (!live) {
-    return next(new AppError("No live found with that ID", 404));
-  }
+//   if (!live) {
+//     return next(new AppError("No live found with that ID", 404));
+//   }
 
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
-});
+//   res.status(204).json({
+//     status: "success",
+//     data: null,
+//   });
+// });

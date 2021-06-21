@@ -22,6 +22,7 @@ router
     authController.restirctTo("admin"),
     teamController.uploadTeam,
     teamController.updateTeam
-  ).delete(authController.restirctTo('admin'), teamController.deleteTeam)
+  )
+  .delete(authController.restirctTo("admin"), teamController.deleteTeam);
 
 module.exports = router;

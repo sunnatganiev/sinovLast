@@ -82,7 +82,7 @@
               class="d-sm-flex align-items-center justify-content-between mb-4"
             >
               <h1 class="h3 mb-0 text-gray-800">Yangiliklar</h1>
-              <a href="add-news.html">Add news &plus;</a>
+              <a href="add-news">Add news &plus;</a>
             </div>
             <div class="card p-4">
               <% news.forEach((newOne) => { %>
@@ -95,6 +95,24 @@
                     <div class="flex-grow-1 ms-4 text-center text-sm-left">
                       <h3><%= newOne.title %></h3>
                       <p><%= newOne.content %></p>
+                    </div>
+                    <div class="d-flex justify-content-center flex-column">
+                      <a class="btn btn-sm btn-warning d-block mb-2" href="/news/id/<%= newOne._id %>"
+                        ><i class="far fa-edit"></i
+                      ></a>
+                      <div class="dropdown d-flex align-items-center">
+                        <a href="#" class="btn btn-sm btn-danger w-100" id="dropDownDeleteConfirm"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-trash"></i></a>
+                        <div class="dropdown-menu p-3" aria-labelledby="dropDownDeleteConfirm">
+                          <h6 class="text-center">Are you sure you want to delete this item?</h6>
+                          <div class="d-flex justify-content-center">
+                            <form method="POST" action="/news/delete" class="d-flex">
+                              <input type="hidden" name="id" value="<%= newOne._id %>">
+                              <button type="submit" class="btn btn-danger btn-sm mr-1">YES</button>
+                            </form>
+                            <a class="btn btn-success btn-sm ml-1" href="#">NO</a>
+                          </div>
+                        </div>
+                      </div>  
                     </div>
                   </div>
                   <hr
@@ -162,7 +180,7 @@
             >
               Cancel
             </button>
-            <a class="btn btn-primary" href="login.html">Logout</a>
+            <a class="btn btn-primary" href="login">Logout</a>
           </div>
         </div>
       </div>

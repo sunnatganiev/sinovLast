@@ -13,17 +13,18 @@ const matchSchema = new mongoose.Schema({
     type: String,
     required: [true, "Iltimos content kirgizing"],
   },
-  matchTime: Date,
-  teams: Array,
+  matchDate: Date,
+  matchTime: String,
+  teams: [{ type: mongoose.Types.ObjectId, ref: "Team" }],
 });
 
 matchSchema.index({ chempionat: 1 });
 
-matchSchema.pre("save", async function (next) {
-  const teamsPromise = this.teams.map(async (id) => await Team.findById(id));
-  this.teams = await Promise.all(teamsPromise);
-  next();
-});
+// matchSchema.pre("save", async function (next) {
+//   const teamsPromise = this.teams.map(async (id) => await Team.findById(id));
+//   this.teams = await Promise.all(teamsPromise);
+//   next();
+// });
 
 const Live = mongoose.model("Live", matchSchema);
 

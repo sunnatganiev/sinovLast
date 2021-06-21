@@ -96,7 +96,6 @@ exports.updateUser = catchAsync(async (req, res, next) => {
   function addDays(date, days) {
     var result = new Date(date);
     result.setDate(result.getDate() + days);
-    console.log("userController line 99: ", result);
     return result;
   }
 
@@ -122,8 +121,7 @@ exports.updateUser = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteUser = catchAsync(async (req, res, next) => {
-  console.log("userController line 126: ", req.params);
-  await User.findByIdAndDelete(req.params.id);
+  await User.findByIdAndDelete(req.body.id);
 
-  res.status(204).redirect("./subscribers.html");
+  res.status(200).redirect("/subscribers");
 });

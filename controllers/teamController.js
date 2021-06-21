@@ -31,8 +31,6 @@ const filterObj = (obj, ...allowedFields) => {
 exports.uploadTeam = upload.single("image");
 
 exports.createTeam = catchAsync(async (req, res, next) => {
-  console.log("TeamControl line 43: ", req.file);
-
   const createObj = filterObj(req.body, "name", "content");
 
   if (req.file) createObj.image = req.file.filename;
@@ -80,9 +78,6 @@ exports.getTeam = catchAsync(async (req, res, next) => {
 });
 
 exports.updateTeam = catchAsync(async (req, res, next) => {
-  // console.log("userController line 55", req.file);
-  // console.log("userController line 56", req.body);
-  console.log("liveControl line 85: ", req.file);
   const updateObj = filterObj(req.body, "name", "content");
 
   if (req.file) updateObj.image = req.file.filename;
@@ -105,14 +100,11 @@ exports.updateTeam = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteTeam = catchAsync(async (req, res, next) => {
-  const team = await Team.findByIdAndDelete(req.params.id);
+  const team = await Team.findByIdAndDelete(req.body.id);
 
   if (!team) {
     return next(new AppError("No team found with that ID", 404));
   }
 
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
+  res.redirect("/teams");
 });

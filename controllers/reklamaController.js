@@ -31,19 +31,13 @@ const filterObj = (obj, ...allowedFields) => {
 exports.uploadReklama = upload.single("video");
 
 exports.createReklama = catchAsync(async (req, res, next) => {
-  // console.log("RekControl line 34: ", req.body);
-
   const createObj = filterObj(req.body, "title", "link");
 
   if (req.file) createObj.video = req.file.filename;
-  console.log("RekControl line 39: ", createObj);
 
   const newReklama = await Reklama.create(createObj);
-  // console.log("RekControl line 41: ", newReklama);
 
-  res.status(201).render("add-reklama", {
-    title: "add-reklama",
-  });
+  res.redirect(`/reklama/id/${newReklama._id}`);
 });
 
 exports.getReklamas = catchAsync(async (req, res, next) => {
@@ -59,6 +53,19 @@ exports.getReklamas = catchAsync(async (req, res, next) => {
     data: {
       reklamas,
     },
+  });
+});
+
+exports.showReklama = catchAsync(async (req, res, next) => {
+  const reklama = await Reklama.findById(req.params.id);
+  // Tour.findOne({ _id: req.params.id })
+
+  if (!reklama) {
+    return next(new AppError("No ad found with that ID", 404));
+  }
+
+  res.status(200).render("show-reklama", {
+    reklama,
   });
 });
 
@@ -79,15 +86,12 @@ exports.getReklama = catchAsync(async (req, res, next) => {
 });
 
 exports.updateReklama = catchAsync(async (req, res, next) => {
-  // console.log("userController line 55", req.file);
-  // console.log("userController line 56", req.body);
-  console.log("reklamControl line 85: ", req.file);
-  const updateObj = filterObj(req.body, "title");
+  const updateObj = filterObj(req.body, "title", "link");
 
   if (req.file) updateObj.video = req.file.filename;
 
   const updatedReklama = await Reklama.findByIdAndUpdate(
-    req.params.id,
+    req.body.id,
     updateObj,
     {
       new: true,
@@ -99,23 +103,15 @@ exports.updateReklama = catchAsync(async (req, res, next) => {
     return next(new AppError("No ad found with that ID", 404));
   }
 
-  res.status(200).json({
-    status: "success",
-    data: {
-      reklama: updatedReklama,
-    },
-  });
+  res.redirect(`/reklama/id/${updatedReklama._id}`);
 });
 
 exports.deleteReklama = catchAsync(async (req, res, next) => {
-  const reklama = await Reklama.findByIdAndDelete(req.params.id);
+  const reklama = await Reklama.findByIdAndDelete(req.body.id);
 
   if (!reklama) {
     return next(new AppError("No ad found with that ID", 404));
   }
 
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
+  res.redirect("/reklama");
 });

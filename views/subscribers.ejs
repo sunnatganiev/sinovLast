@@ -110,9 +110,24 @@
                       </span>
                     </td>
                     <td>
-                      <a class="mr-2" href="<%= 'edit-user.html/' + user.id %> "
-                        ><i class="far fa-edit"></i
-                      ></a>
+                      <div class="d-flex">
+                        <a class="mr-2" href="<%= 'edit-user/' + user.id %>"><i class="far fa-edit"></i
+                        ></a>
+                        <div class="dropdown d-flex align-items-center ml-1">
+                          <a href="#" class="text-danger" id="dropDownDeleteConfirm"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-trash"></i></a>
+                          <div class="dropdown-menu p-3" aria-labelledby="dropDownDeleteConfirm">
+                            <h6 class="text-center">Are you sure you want to delete this item?</h6>
+                            <div class="d-flex justify-content-center">
+                              <form method="POST" action="/user/delete" class="d-flex">
+                                <input type="hidden" name="id" value="<%= user._id %>">
+                                <button type="submit" class="btn btn-danger btn-sm mr-1">YES</button>
+                              </form>
+                              <a class="btn btn-success btn-sm ml-1" href="#">NO</a>
+                            </div>
+                          </div>
+                          
+                        </div>
+                      </div>
                     </td>
                   </tr>
 
